@@ -1,12 +1,14 @@
 # Webpack build middleware
 
 simplifies using webpack builds on server with single middleware,
-inspirations taken from article [Don't use nodemon by Kevin Simple](https://medium.com/@kevinsimper/dont-use-nodemon-there-are-better-ways-fc016b50b45e)
+inspiration taken from article [Don't use nodemon by Kevin Simple](https://medium.com/@kevinsimper/dont-use-nodemon-there-are-better-ways-fc016b50b45e)
 
 
 ## Features
 - **hot reload** - server is updated within few miliseconds
 - **serving assets** - with `dev-middleware` on development and `serve-static` on production
+- **less hacky** - no need for `babel-register`, `webpack-isomorphic-tools`
+- **full webpack power** - files are transpilled with webpack which means you can use css modules and all fancy stuff like `import template from './layout.pug'` 
 - **production ready** - after some testing it should be reliable solution
 
 ## Setup
@@ -102,7 +104,6 @@ export default function (req, res, next) {
 }
 ```
 
-> this file is transpilled with webpack which means you can use fancy stuff like `import template from './layout.pug'`
 
 ### With `nodemon`
 
