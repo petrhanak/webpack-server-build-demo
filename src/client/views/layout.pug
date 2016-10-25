@@ -1,0 +1,9 @@
+doctype html
+html
+    head
+        each style in css
+            link(rel='stylesheet', href=publicPath+style)
+    body
+        #app!=app
+        each script in js
+            script(type='text/javascript' src=publicPath+script)
