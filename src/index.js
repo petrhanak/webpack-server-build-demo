@@ -1,29 +1,62 @@
-var express = require('express');
-var path = require('path');
-var api = require('./api/index');
-var config = require('./config');
-var webpackBuildMiddleware = require('../webpackBuildTools/webpackBuild').middleware;
-var wire = require('../webpackBuildTools/webpackBuild').wire;
+import path from 'path';
+import _ from 'lodash';
+import React from 'react';
+import ReactDOM from 'react-dom/server';
+import { Router } from 'express';
+import layout from './client/views/layout.pug';
+import App from './client/components/App';
 
-var webpackConfig = config.hot ? require('../webpack.dev.config.js') : require('../webpack.prod.config.js');
+const manifestFilename = path.resolve(__dirname, '..', 'build', 'dist', 'manifest.json');
 
-var app = express();
+function typeOf(files, extension) {
+  return files
+    .filter(filename => filename.endsWith('.' + extension))
+    .map(filename => '/' + filename);
+}
 
-app.use('/api', api);
+function parseManifest(buffer) {
+  const data = JSON.parse(buffer);
+  const assets = _.values(data);
 
-app.use(
-  webpackBuildMiddleware({
-    hot: config.hot,
-    webpackConfig: webpackConfig
-  })
-);
-
-wire('client/ssr.js');
-
-app.listen(config.port, function(err) {
-  if(err) {
-    throw err;
+  return {
+    js: typeOf(assets, 'js'),
+    css: typeOf(assets, 'css')
   }
+}
 
-  console.log('listening on :' + config.port);
-});
+function getAssets(devFilesystem) {
+  return new Promise((resolve, reject) => {
+    const fs = devFilesystem || require('fs');
+
+    fs.readFile(manifestFilename, (err, data) => {
+      if (err) {
+        reject(err)
+      }
+      resolve(
+        parseManifest(data)
+      );
+    })
+  });
+}
+
+const router = Router();
+
+export default (devFilesystem) => {
+  const assets = getAssets(devFilesystem);
+
+  router.use('/', (req, res, next) => {
+    const component = ReactDOM.renderToString(<App />);
+
+    assets.then(({ css, js }) => {
+      res.send(
+        layout({
+          component,
+          js,
+          css
+        })
+      );
+    })
+  });
+
+  return router;
+}
