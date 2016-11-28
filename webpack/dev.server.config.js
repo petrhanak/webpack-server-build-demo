@@ -34,6 +34,11 @@ module.exports = {
         test: /\.css$/,
         exclude: 'node_modules',
         loader: 'css-loader/locals?modules'
+      },
+      {
+        test: /\.(jpeg|jpg|png|svg)$/,
+        exclude: 'node_modules',
+        loader: 'url-loader?limit=10000&emitFile=false'
       }
     ]
   },
