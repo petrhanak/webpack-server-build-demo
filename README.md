@@ -1,6 +1,9 @@
-#Webpack server build demo
+> Once upon a time everyone was writing their own SSR. It was madness. Then next.js came and made it simple.
+I would say it wasn't that bad when I wrote it, but there are some nasty has memory leaks and other issues. At the moment you no longer have to write your own SSR boilerplate, there are better solution.
 
-##Installation
+# Webpack server build demo
+
+## Installation
 
 ```
 git clone https://github.com/petrhanak/webpack-server-build-demo.git
